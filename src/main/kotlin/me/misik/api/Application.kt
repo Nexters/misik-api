@@ -1,4 +1,4 @@
-package com.misik.api
+package me.misik.api
 
 import org.rooftop.netx.meta.EnableSaga
 import org.springframework.boot.SpringApplication

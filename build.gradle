@@ -19,7 +19,7 @@ test {
 }
 
 application {
-    mainClassName = 'com.misik.api.Application'
+    mainClassName = 'me.misik.api.Application'
 }
 
 apply from: "gradle/db.gradle"
