@@ -1,0 +1,36 @@
+package me.misik.api.infra
+
+import me.misik.api.core.Chatbot
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.support.WebClientAdapter
+import org.springframework.web.service.invoker.HttpServiceProxyFactory
+
+@Configuration
+class ClovaChatbotConfiguration(
+    @Qualifier("\${me.misik.chatbot.clova.url:https://clovastudio.stream.ntruss.com/}") private val chatbotUrl: String,
+    @Qualifier("\${me.misik.chatbot.clova.authorization}") private val authorization: String,
+) {
+
+    @Bean
+    fun clovaChatbot(): Chatbot {
+        val webClient = WebClient.builder()
+            .baseUrl(chatbotUrl)
+            .defaultHeaders { headers ->
+                headers.add(HttpHeaders.AUTHORIZATION, authorization)
+                headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                headers.add(HttpHeaders.ACCEPT, MediaType.TEXT_EVENT_STREAM_VALUE)
+            }
+            .build()
+
+        val httpServiceProxyFactory = HttpServiceProxyFactory
+            .builderFor(WebClientAdapter.create(webClient))
+            .build()
+
+        return httpServiceProxyFactory.createClient(Chatbot::class.java)
+    }
+}

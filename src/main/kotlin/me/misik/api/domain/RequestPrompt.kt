@@ -9,7 +9,7 @@ class RequestPrompt(
     @Column(name = "style", nullable = false, columnDefinition = "VARCHAR(20)")
     val style: ReviewStyle,
 
-    @Column(name = "text", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "prompt_text", columnDefinition = "TEXT", nullable = false)
     val text: String,
 
     @Column(name = "hash_tags", columnDefinition = "TEXT", nullable = false)

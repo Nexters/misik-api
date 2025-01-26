@@ -1,10 +1,6 @@
 package me.misik.api.domain
 
-import jakarta.persistence.Column
-import jakarta.persistence.Embedded
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import me.misik.api.core.AggregateRoot
 
 
@@ -16,6 +12,9 @@ class Review(
     @Column(name = "id")
     val id: Long,
 
+    @Column(name = "is_completed")
+    val isCompleted: Boolean,
+
     @Column(name = "text", length = 300, columnDefinition = "VARCHAR(300)", nullable = false)
     val text: String,
 
@@ -24,7 +23,4 @@ class Review(
 
     @Embedded
     val requestPrompt: RequestPrompt,
-): AbstractTime() {
-
-
-}
+) : AbstractTime()
