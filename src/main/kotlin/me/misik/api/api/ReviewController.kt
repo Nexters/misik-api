@@ -10,7 +10,7 @@ class ReviewController(
     private val createReviewFacade: CreateReviewFacade,
 ) {
 
-    @PostMapping("https://api.misik.me/reviews/{id}/re-create")
+    @PostMapping("reviews/{id}/re-create")
     fun createReview(
         @PathVariable("id") id: Long,
     ) = createReviewFacade.reCreateReviewInBackground(id)
