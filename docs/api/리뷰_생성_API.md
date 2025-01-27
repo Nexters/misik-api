@@ -24,3 +24,9 @@
 ### Response
 
 #### `Response Status 200 OK`
+
+``` json
+{
+  "id": "1234567890123"
+}
+```
