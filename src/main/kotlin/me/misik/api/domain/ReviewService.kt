@@ -1,5 +1,6 @@
 package me.misik.api.domain
 
+import me.misik.api.api.request.CreateReviewRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -8,6 +9,22 @@ import org.springframework.transaction.annotation.Transactional
 class ReviewService(
     private val reviewRepository: ReviewRepository,
 ) {
+
+    @Transactional
+    fun createReview(deviceId: String, createReviewRequest: CreateReviewRequest): Review {
+        val requestPrompt = RequestPrompt(
+            style = createReviewRequest.reviewStyle,
+            text = createReviewRequest.ocrText,
+            hashTags = createReviewRequest.hashTag
+        )
+
+        val review = Review.create(
+            deviceId = deviceId,
+            requestPrompt = requestPrompt
+        )
+
+        return reviewRepository.save(review)
+    }
 
     @Transactional
     fun setReviewCompletedStatus(id: Long, completedStatus: Boolean) =

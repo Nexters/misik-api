@@ -1,5 +1,6 @@
 package me.misik.api.domain
 
+import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.common.runBlocking
 import io.kotest.core.annotation.DisplayName
 import io.kotest.core.spec.style.DescribeSpec
@@ -64,6 +65,19 @@ class ReviewServiceTest(
                     reviewRepository.getReferenceById(review.id).text shouldBe "ABCD"
                 }
 
+            }
+        }
+    }
+
+    describe("createReviewInBackground 메소드는") {
+        context("deviceId와 createReviewRequest를 입력받으면,") {
+            it("리뷰를 생성한다") {
+                val deviceId = deviceIdFixture()
+                val createReviewRequest = createReviewRequestFixture()
+
+                shouldNotThrowAny {
+                    reviewService.createReview(deviceId, createReviewRequest)
+                }
             }
         }
     }
