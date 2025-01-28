@@ -14,10 +14,3 @@
 ### Response
 
 #### `Response Status 200 OK`
-
-```json
-{
-  "id": "123456789",
-  "review": "가득합니다....."
-}
-```

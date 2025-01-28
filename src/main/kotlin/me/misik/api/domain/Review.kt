@@ -1,10 +1,6 @@
 package me.misik.api.domain
 
-import jakarta.persistence.Column
-import jakarta.persistence.Embedded
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import me.misik.api.core.AggregateRoot
 
 
@@ -16,15 +12,15 @@ class Review(
     @Column(name = "id")
     val id: Long,
 
-    @Column(name = "text", length = 300, columnDefinition = "VARCHAR(300)", nullable = false)
-    val text: String,
+    @Column(name = "is_completed")
+    var isCompleted: Boolean,
+
+    @Column(name = "text", length = 1000, columnDefinition = "VARCHAR(1000)", nullable = false)
+    var text: String,
 
     @Column(name = "device_id", nullable = false, columnDefinition = "VARCHAR(100)")
     val deviceId: String,
 
     @Embedded
     val requestPrompt: RequestPrompt,
-): AbstractTime() {
-
-
-}
+) : AbstractTime()
