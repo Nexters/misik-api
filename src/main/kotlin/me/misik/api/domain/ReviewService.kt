@@ -41,6 +41,11 @@ class ReviewService(
     @Transactional
     fun updateReview(id: Long, text: String) = reviewRepository.addText(id, text)
 
+    @Transactional
+    fun updateAndCompleteReview(id: Long, text: String) = reviewRepository.updateTextAndComplete(id, text)
+
     fun getById(id: Long): Review = reviewRepository.findByIdOrNull(id)
         ?: throw IllegalArgumentException("Cannot find review by id \"$id\"")
+
+
 }

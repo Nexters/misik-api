@@ -18,6 +18,10 @@ interface ReviewRepository : JpaRepository<Review, Long> {
     fun setReviewCompletedStatus(@Param("id") id: Long, @Param("completedStatus") completedStatus: Boolean)
 
     @Lock(LockModeType.PESSIMISTIC_READ)
-    @Query("select r from review as r where id = :id")
+    @Query("select r from review as r where r.id = :id")
     fun getReviewWithReadLock(@Param("id") id: Long): Review
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update review as r set r.text = :text, r.isCompleted = true where r.id = :id")
+    fun updateTextAndComplete(id: Long, text: String): Any
 }

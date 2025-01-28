@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
 import me.misik.api.core.Chatbot
 import me.misik.api.core.GracefulShutdownDispatcher
+import me.misik.api.domain.CreateReviewCache
+import me.misik.api.domain.Review
 import me.misik.api.domain.ReviewService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service
 class ReCreateReviewFacade(
     private val chatbot: Chatbot,
     private val reviewService: ReviewService,
+    private val createReviewCache: CreateReviewCache
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.simpleName)
@@ -20,28 +23,37 @@ class ReCreateReviewFacade(
     fun reCreateReviewInBackground(deviceId: String, id: Long) {
         reviewService.clearReview(id)
 
-        reCreateReviewWithRetry(id, retryCount = 0)
+        val review = reviewService.getById(id)
+
+        reCreateReviewWithRetry(review, retryCount = 0)
     }
 
-    private fun reCreateReviewWithRetry(id: Long, retryCount: Int) {
+    private fun reCreateReviewWithRetry(review: Review, retryCount: Int) {
         CoroutineScope(GracefulShutdownDispatcher.dispatcher).launch {
-            val review = reviewService.getById(id)
 
             chatbot.createReviewWithModelName(Chatbot.Request.from(review))
                 .filterNot { it.stopReason == ALREADY_COMPLETED }
                 .collect {
-                    reviewService.updateReview(id, it.message?.content ?: "")
+                    val newText = it.message?.content ?: ""
+                    review.text = review.text + newText
+
+                    val updatedReview = review.copy()
+                    createReviewCache.put(review.id, updatedReview)
                 }
         }.invokeOnCompletion {
             if (it == null) {
-                return@invokeOnCompletion reviewService.completeReview(id)
+                createReviewCache.get(review.id)?.let {
+                    reviewService.updateAndCompleteReview(it.id, it.text)
+                }
+                createReviewCache.remove(review.id)
+                return@invokeOnCompletion
             }
             if (retryCount == MAX_RETRY_COUNT) {
                 logger.error("Failed to create review.", it)
                 throw it
             }
             logger.warn("Failed to create review. retrying... retryCount: \"${retryCount + 1}\"", it)
-            reCreateReviewWithRetry(id, retryCount + 1)
+            reCreateReviewWithRetry(review, retryCount + 1)
         }
     }
 

@@ -48,4 +48,20 @@ class Review(
             )
         }
     }
+
+    fun copy(
+        id: Long = this.id,
+        isCompleted: Boolean = this.isCompleted,
+        text: String = this.text,
+        deviceId: String = this.deviceId,
+        requestPrompt: RequestPrompt = this.requestPrompt,
+    ): Review {
+        return Review(
+            id = id,
+            isCompleted = isCompleted,
+            text = text,
+            deviceId = deviceId,
+            requestPrompt = requestPrompt,
+        )
+    }
 }
