@@ -6,7 +6,7 @@ key:value는 요청 text에 따라 다르게 응답합니다.
 
 ## Request
 
-### HTTP METHOD : `GET`
+### HTTP METHOD : `POST`
 
 ### url : `https://api.misik.me/reviews/ocr-parsing`
 ### Http Headers

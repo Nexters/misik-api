@@ -1,15 +1,12 @@
 package me.misik.api.core
 
-import kotlinx.coroutines.flow.Flow
-import me.misik.api.domain.Review
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.service.annotation.PostExchange
 
-fun interface Chatbot {
+fun interface OcrParser {
 
     @PostExchange("/testapp/v1/chat-completions/HCX-003")
-    fun createReviewWithModelName(@RequestBody request: Request): Flow<Response>
-
+    fun createParsedOcr(@RequestBody request: Request): Response
 
     data class Request(
         val messages: List<Message>,
@@ -48,7 +45,7 @@ fun interface Chatbot {
                         },
                         {
                           "key": "가격",
-                          "value": "카야토스트+음료세트"
+                          "value": "3000"
                         },
                         ...
                       ]
@@ -57,16 +54,7 @@ fun interface Chatbot {
                 """
             )
 
-            fun from(review: Review): Request {
-                return Request(
-                    messages = listOf(
-                        Message.createSystem(review.requestPrompt.promptCommand + review.requestPrompt.hashTags.joinToString(", ") { "$it" }),
-                        Message.createUser(review.requestPrompt.ocrText)
-                    )
-                )
-            }
-
-            fun createParsedOcr(ocrText: String): Request {
+            fun from(ocrText: String): Request {
                 return Request(
                     messages = listOf(
                         cachedParsingSystemMessage,
@@ -78,13 +66,20 @@ fun interface Chatbot {
     }
 
     data class Response(
-        val stopReason: String?,
-        val message: Message?,
+        val status: Status?,
+        val result: Result?
     ) {
-        data class Message(
-            val role: String,
-            val content: String,
+        data class Status(
+            val code: String,
+            val message: String
         )
+        data class Result(
+            val message: Message?
+        ) {
+            data class Message(
+                val role: String,
+                val content: String
+            )
+        }
     }
 }
-

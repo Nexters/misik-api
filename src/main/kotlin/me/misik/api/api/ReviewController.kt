@@ -1,6 +1,8 @@
 package me.misik.api.api
 
 import me.misik.api.api.request.CreateReviewRequest
+import me.misik.api.api.request.OcrTextRequest
+import me.misik.api.api.response.ParsedOcrResponse
 import me.misik.api.app.CreateReviewFacade
 import me.misik.api.app.ReCreateReviewFacade
 import org.springframework.web.bind.annotation.PathVariable
@@ -26,4 +28,10 @@ class ReviewController(
         @RequestHeader("device-id") deviceId: String,
         @PathVariable("id") id: Long,
     ) = reCreateReviewFacade.reCreateReviewInBackground(deviceId, id)
+
+    @PostMapping("reviews/ocr-parsing")
+    fun parseOcrText(
+        @RequestHeader("device-id") deviceId: String,
+        @RequestBody ocrText: OcrTextRequest,
+    ) : ParsedOcrResponse = createReviewFacade.parseOcrText(deviceId, ocrText)
 }

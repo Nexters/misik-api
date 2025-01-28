@@ -1,28 +1,38 @@
 package me.misik.api.app;
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
 import me.misik.api.api.request.CreateReviewRequest
+import me.misik.api.api.request.OcrTextRequest
+import me.misik.api.api.response.ParsedOcrResponse
 import me.misik.api.core.Chatbot
 import me.misik.api.core.GracefulShutdownDispatcher
 import me.misik.api.domain.CreateReviewCache
 import me.misik.api.domain.Review
 import me.misik.api.domain.ReviewService
 import me.misik.api.domain.query.PromptService
+import me.misik.api.core.OcrParser
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 
 
 @Service
 class CreateReviewFacade(
     private val chatbot:Chatbot,
+    private val ocrParser: OcrParser,
     private val reviewService:ReviewService,
     private val promptService: PromptService,
     private val createReviewCache: CreateReviewCache
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.simpleName)
+    val kotlinModule = KotlinModule.Builder().build()
+    val objectMapper = ObjectMapper().registerModule(kotlinModule)
 
     fun createReviewInBackground(deviceId:String, createReviewRequest: CreateReviewRequest) : Long {
         val prompt = promptService.getByStyle(createReviewRequest.reviewStyle)
@@ -60,6 +70,27 @@ class CreateReviewFacade(
             }
             logger.warn("Failed to create review. retrying... retryCount: \"${retryCount + 1}\"", it)
             createReviewWithRetry(review, retryCount + 1)
+        }
+    }
+
+    fun parseOcrText(deviceId: String, ocrText: OcrTextRequest): ParsedOcrResponse {
+        val response = ocrParser.createParsedOcr(OcrParser.Request.from(ocrText.text))
+        val responseContent = response.result?.message?.content?: ""
+
+        try {
+            val parsedOcr: ParsedOcrResponse = objectMapper.readValue(
+                responseContent,
+                ParsedOcrResponse::class.java
+            )
+
+            if (parsedOcr.parsed.isEmpty()) {
+                throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+            }
+
+            return parsedOcr
+        } catch (e: Exception) {
+            logger.error("Failed to parse ocr text.", e)
+            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
