@@ -1,5 +1,7 @@
 package me.misik.api.domain
 
+import me.misik.api.api.request.CreateReviewRequest
+
 fun review(
     id: Long = 0L,
     isCompleted: Boolean = false,
@@ -15,11 +17,23 @@ fun review(
 )
 
 fun requestPrompt(
-    style: ReviewStyle = ReviewStyle.DUMMY,
+    style: ReviewStyle = ReviewStyle.PROFESSIONAL,
     text: String = "",
     hashTags: List<String> = listOf(),
 ): RequestPrompt = RequestPrompt(
     style = style,
-    text = text,
+    ocrText = text,
     hashTags = hashTags,
 )
+
+fun createReviewRequestFixture(
+    ocrText: String = "testOcrText",
+    hashTag: List<String> = listOf("testHashTag"),
+    reviewStyle: ReviewStyle = ReviewStyle.PROFESSIONAL
+): CreateReviewRequest = CreateReviewRequest(
+    ocrText = ocrText,
+    hashTag = hashTag,
+    reviewStyle = reviewStyle,
+)
+
+fun deviceIdFixture(): String = "testDeviceId"

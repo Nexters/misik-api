@@ -5,6 +5,10 @@ import me.misik.api.domain.AbstractTime
 import me.misik.api.domain.ReviewStyle
 
 @Entity
+@Table(
+    name = "prompt",
+    uniqueConstraints = [UniqueConstraint(columnNames = ["style"])]
+)
 class Prompt(
     @Id
     @Column(name = "id")
@@ -14,6 +18,6 @@ class Prompt(
     @Enumerated(EnumType.STRING)
     val style: ReviewStyle,
 
-    @Column(name = "text", columnDefinition = "TEXT", nullable = false)
-    val text: String,
+    @Column(name = "command", columnDefinition = "TEXT", nullable = false)
+    val command: String,
 ) : AbstractTime()

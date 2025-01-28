@@ -1,7 +1,12 @@
 package me.misik.api.domain
 
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Embedded
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import me.misik.api.core.AggregateRoot
+import me.misik.api.core.IdGenerator
 
 
 @Entity(name = "review")
@@ -23,4 +28,24 @@ class Review(
 
     @Embedded
     val requestPrompt: RequestPrompt,
-) : AbstractTime()
+) : AbstractTime() {
+
+    companion object {
+
+        fun create(
+            text: String = "",
+            deviceId: String,
+            requestPrompt: RequestPrompt,
+            isCompleted: Boolean = false,
+        ): Review {
+
+            return Review(
+                id = IdGenerator.generate(),
+                isCompleted = isCompleted,
+                text = text,
+                deviceId = deviceId,
+                requestPrompt = requestPrompt,
+            )
+        }
+    }
+}
