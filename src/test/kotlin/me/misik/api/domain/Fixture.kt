@@ -23,6 +23,7 @@ fun requestPrompt(
 ): RequestPrompt = RequestPrompt(
     style = style,
     ocrText = text,
+    promptCommand = text,
     hashTags = hashTags,
 )
 
@@ -37,3 +38,5 @@ fun createReviewRequestFixture(
 )
 
 fun deviceIdFixture(): String = "testDeviceId"
+
+fun promptCommandFixture(): String = "testPromptCommand"

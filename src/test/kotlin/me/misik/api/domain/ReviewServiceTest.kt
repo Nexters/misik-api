@@ -60,13 +60,14 @@ class ReviewServiceTest(
     }
 
     describe("createReviewInBackground 메소드는") {
-        context("deviceId와 createReviewRequest를 입력받으면,") {
+        context("deviceId, promptCommand, createReviewRequest를 입력받으면,") {
             it("리뷰를 생성한다") {
                 val deviceId = deviceIdFixture()
                 val createReviewRequest = createReviewRequestFixture()
+                val promptCommand = promptCommandFixture();
 
                 shouldNotThrowAny {
-                    reviewService.createReview(deviceId, createReviewRequest)
+                    reviewService.createReview(deviceId, promptCommand, createReviewRequest)
                 }
             }
         }
