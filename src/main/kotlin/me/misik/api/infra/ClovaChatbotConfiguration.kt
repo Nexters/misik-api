@@ -13,7 +13,7 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory
 @Configuration
 class ClovaChatbotConfiguration(
     @Value("\${me.misik.chatbot.clova.url:https://clovastudio.stream.ntruss.com/}") private val chatbotUrl: String,
-    @Value("\${me.misik.chatbot.clova.authorization:nv-e44d6c703b0049adb0db06ac1bcb85362x02}") private val authorization: String,
+    @Value("\${me.misik.chatbot.clova.authorization}") private val authorization: String,
 ) {
 
     @Bean

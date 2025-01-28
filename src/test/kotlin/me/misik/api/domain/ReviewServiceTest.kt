@@ -23,25 +23,15 @@ class ReviewServiceTest(
         reviewRepository.deleteAllInBatch()
     }
 
-    describe("setReviewCompletedStatus 메소드는") {
+    describe("completeReview 메소드는") {
 
-        context("completedStatus를 true로 입력받으면,") {
+        context("id를 입력받으면,") {
             val review = reviewRepository.save(review(isCompleted = false))
 
             it("review의 isCompleted 상태를 true로 변경한다") {
-                reviewService.setReviewCompletedStatus(review.id, true)
+                reviewService.completeReview(review.id)
 
                 reviewRepository.getReferenceById(review.id).isCompleted shouldBe true
-            }
-        }
-
-        context("completedStatus를 false로 입력받으면,") {
-            val review = reviewRepository.save(review(isCompleted = true))
-
-            it("review의 isCompleted 상태를 false로 변경한다") {
-                reviewService.setReviewCompletedStatus(review.id, false)
-
-                reviewRepository.getReferenceById(review.id).isCompleted shouldBe false
             }
         }
     }
