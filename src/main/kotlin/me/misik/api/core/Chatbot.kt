@@ -40,7 +40,7 @@ fun interface Chatbot {
             fun from(review: Review): Request {
                 return Request(
                     messages = listOf(
-                        Message.createSystem(review.requestPrompt.promptCommand),
+                        Message.createSystem(review.requestPrompt.promptCommand + review.requestPrompt.hashTags.joinToString(", ") { "$it" }),
                         Message.createUser(review.requestPrompt.ocrText)
                     )
                 )
