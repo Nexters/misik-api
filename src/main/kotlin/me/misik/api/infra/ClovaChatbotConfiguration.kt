@@ -1,7 +1,7 @@
 package me.misik.api.infra
 
 import me.misik.api.core.Chatbot
-import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
@@ -12,8 +12,8 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory
 
 @Configuration
 class ClovaChatbotConfiguration(
-    @Qualifier("\${me.misik.chatbot.clova.url:https://clovastudio.stream.ntruss.com/}") private val chatbotUrl: String,
-    @Qualifier("\${me.misik.chatbot.clova.authorization}") private val authorization: String,
+    @Value("\${me.misik.chatbot.clova.url:https://clovastudio.stream.ntruss.com/}") private val chatbotUrl: String,
+    @Value("\${me.misik.chatbot.clova.authorization:nv-e44d6c703b0049adb0db06ac1bcb85362x02}") private val authorization: String,
 ) {
 
     @Bean
@@ -21,7 +21,7 @@ class ClovaChatbotConfiguration(
         val webClient = WebClient.builder()
             .baseUrl(chatbotUrl)
             .defaultHeaders { headers ->
-                headers.add(HttpHeaders.AUTHORIZATION, authorization)
+                headers.add(HttpHeaders.AUTHORIZATION, "Bearer $authorization")
                 headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 headers.add(HttpHeaders.ACCEPT, MediaType.TEXT_EVENT_STREAM_VALUE)
             }
