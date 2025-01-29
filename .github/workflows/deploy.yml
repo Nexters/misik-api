@@ -63,7 +63,7 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/nexters/misikapi/misikapi:test3
+            ghcr.io/nexters/misikapi/misikapi:test4
           build-args: |
             "DB_URL=${{ secrets.DB_URL }}"
             "DB_USERNAME=${{ secrets.DB_USERNAME }}"
@@ -83,6 +83,6 @@ jobs:
 
       - name: run api server
         run: |
-          sudo docker pull ghcr.io/nexters/misikapi/misikapi:test3
+          sudo docker pull ghcr.io/nexters/misikapi/misikapi:test4
           sudo docker ps -q --filter "expose=8080" | xargs sudo docker stop | xargs sudo docker rm
-          sudo docker run -d -p 8080:8080 --network docker-compose_misik_api_network ghcr.io/nexters/misikapi/misikapi:test3
+          sudo docker run -d -p 8080:8080 --network docker-compose_misik_api_network ghcr.io/nexters/misikapi/misikapi:test4
