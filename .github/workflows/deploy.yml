@@ -70,6 +70,7 @@ jobs:
             "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"
             "REDIS_HOST=${{ secrets.REDIS_HOST }}"
             "REDIS_PORT=${{ secrets.REDIS_PORT }}"
+            "CLOVA_AUTHORIZATION=${{ secrets.CLOVA_AUTHORIZATION }}"
 
   deploy:
     needs: build
@@ -85,4 +86,3 @@ jobs:
           sudo docker pull ghcr.io/nexters/misikapi/misikapi:test3
           sudo docker ps -q --filter "expose=8080" | xargs sudo docker stop | xargs sudo docker rm
           sudo docker run -d -p 8080:8080 --network docker-compose_misik_api_network ghcr.io/nexters/misikapi/misikapi:test3
-            
