@@ -39,9 +39,6 @@ jobs:
       - name: build server
         run: ./gradlew build
 
-      - name: move jar file to deploy api
-        run: mv ./build/libs/*.jar ./deploy/api/
-
       - name: docker arm64 build set up - qemu
         uses: docker/setup-qemu-action@v2
 
