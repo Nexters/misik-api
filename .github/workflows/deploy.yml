@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - 'release'
-  pull_request: # 테스트용. 잘 되는거 확인 후 삭제
-    branches:
-      - 'main'
 
 jobs:
   build:
