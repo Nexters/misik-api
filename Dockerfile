@@ -6,7 +6,7 @@ ARG DB_PASSWORD
 ARG REDIS_HOST
 ARG REDIS_PORT
 
-ARG JAR_FILE=./*.jar
+ARG JAR_FILE=./build/libs/*.jar
 COPY ${JAR_FILE} misik-api.jar
 
 ENV db_url=${DB_URL} \
