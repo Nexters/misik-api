@@ -1,4 +1,4 @@
-FROM arm64v8/openjdk:21
+FROM openjdk:21-jdk
 
 ARG DB_URL
 ARG DB_USERNAME
