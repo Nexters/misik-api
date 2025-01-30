@@ -1,5 +1,6 @@
 package me.misik.api.domain
 
+import me.misik.api.domain.request.CreateReviewRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -9,6 +10,23 @@ import org.springframework.transaction.annotation.Transactional
 class ReviewService(
     private val reviewRepository: ReviewRepository,
 ) {
+
+    @Transactional
+    fun createReview(deviceId: String, promptCommand: String, createReviewRequest: CreateReviewRequest): Review {
+        val requestPrompt = RequestPrompt(
+            style = createReviewRequest.reviewStyle,
+            ocrText = createReviewRequest.ocrText,
+            promptCommand = promptCommand,
+            hashTags = createReviewRequest.hashTag
+        )
+
+        val review = Review.create(
+            deviceId = deviceId,
+            requestPrompt = requestPrompt
+        )
+
+        return reviewRepository.save(review)
+    }
 
     @Transactional
     fun clearReview(id: Long) {
@@ -23,6 +41,10 @@ class ReviewService(
     @Transactional
     fun updateReview(id: Long, text: String) = reviewRepository.addText(id, text)
 
+    @Transactional
+    fun updateAndCompleteReview(id: Long, text: String) = reviewRepository.updateTextAndComplete(id, text)
+
     fun getById(id: Long): Review = reviewRepository.findByIdOrNull(id)
         ?: throw IllegalArgumentException("Cannot find review by id \"$id\"")
+
 }

@@ -1,36 +1,42 @@
-package me.misik.api.app
+package me.misik.api.app;
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
+import me.misik.api.domain.request.CreateReviewRequest
 import me.misik.api.core.Chatbot
 import me.misik.api.core.GracefulShutdownDispatcher
 import me.misik.api.domain.CreateReviewCache
 import me.misik.api.domain.Review
 import me.misik.api.domain.ReviewService
+import me.misik.api.domain.prompt.PromptService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
+
 @Service
-class ReCreateReviewFacade(
-    private val chatbot: Chatbot,
-    private val reviewService: ReviewService,
+class CreateReviewFacade(
+    private val chatbot:Chatbot,
+    private val reviewService:ReviewService,
+    private val promptService: PromptService,
     private val createReviewCache: CreateReviewCache
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
-    fun reCreateReviewInBackground(deviceId: String, id: Long) {
-        reviewService.clearReview(id)
+    fun createReviewInBackground(deviceId:String, createReviewRequest: CreateReviewRequest) : Long {
+        val prompt = promptService.getByStyle(createReviewRequest.reviewStyle)
+        val review = reviewService.createReview(deviceId, prompt.command, createReviewRequest)
 
-        val review = reviewService.getById(id)
+        createReviewCache.put(review.id, review)
 
-        reCreateReviewWithRetry(review, retryCount = 0)
+        createReviewWithRetry(review, retryCount = 0)
+
+        return review.id
     }
 
-    private fun reCreateReviewWithRetry(review: Review, retryCount: Int) {
+    private fun createReviewWithRetry(review: Review, retryCount: Int) {
         CoroutineScope(GracefulShutdownDispatcher.dispatcher).launch {
-
             chatbot.createReviewWithModelName(Chatbot.Request.from(review))
                 .filterNot { it.stopReason == ALREADY_COMPLETED }
                 .collect {
@@ -54,7 +60,7 @@ class ReCreateReviewFacade(
                 throw it
             }
             logger.warn("Failed to create review. retrying... retryCount: \"${retryCount + 1}\"", it)
-            reCreateReviewWithRetry(review, retryCount + 1)
+            createReviewWithRetry(review, retryCount + 1)
         }
     }
 
