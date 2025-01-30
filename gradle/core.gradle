@@ -1,4 +1,3 @@
 dependencies {
     implementation "org.rooftopmsa:netx:${netxVersion}"
-    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonKotlinVersion}"
 }

@@ -1,7 +1,6 @@
 package me.misik.api.app;
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
@@ -27,12 +26,11 @@ class CreateReviewFacade(
     private val ocrParser: OcrParser,
     private val reviewService:ReviewService,
     private val promptService: PromptService,
-    private val createReviewCache: CreateReviewCache
+    private val createReviewCache: CreateReviewCache,
+    private val objectMapper: ObjectMapper,
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.simpleName)
-    val kotlinModule = KotlinModule.Builder().build()
-    val objectMapper = ObjectMapper().registerModule(kotlinModule)
 
     fun createReviewInBackground(deviceId:String, createReviewRequest: CreateReviewRequest) : Long {
         val prompt = promptService.getByStyle(createReviewRequest.reviewStyle)
