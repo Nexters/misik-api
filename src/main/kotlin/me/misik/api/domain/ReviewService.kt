@@ -1,6 +1,6 @@
 package me.misik.api.domain
 
-import me.misik.api.api.request.CreateReviewRequest
+import me.misik.api.domain.request.CreateReviewRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -46,6 +46,5 @@ class ReviewService(
 
     fun getById(id: Long): Review = reviewRepository.findByIdOrNull(id)
         ?: throw IllegalArgumentException("Cannot find review by id \"$id\"")
-
 
 }

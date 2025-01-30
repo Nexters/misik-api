@@ -1,4 +1,4 @@
-package me.misik.api.api.request
+package me.misik.api.domain.request
 
 import me.misik.api.domain.ReviewStyle
 

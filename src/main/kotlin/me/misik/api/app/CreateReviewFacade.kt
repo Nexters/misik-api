@@ -3,13 +3,13 @@ package me.misik.api.app;
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
-import me.misik.api.api.request.CreateReviewRequest
+import me.misik.api.domain.request.CreateReviewRequest
 import me.misik.api.core.Chatbot
 import me.misik.api.core.GracefulShutdownDispatcher
 import me.misik.api.domain.CreateReviewCache
 import me.misik.api.domain.Review
 import me.misik.api.domain.ReviewService
-import me.misik.api.domain.query.PromptService
+import me.misik.api.domain.prompt.PromptService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -41,7 +41,7 @@ class CreateReviewFacade(
                 .filterNot { it.stopReason == ALREADY_COMPLETED }
                 .collect {
                     val newText = it.message?.content ?: ""
-                    review.text = review.text + newText
+                    review.addText(newText)
 
                     val updatedReview = review.copy()
                     createReviewCache.put(review.id, updatedReview)
@@ -56,6 +56,7 @@ class CreateReviewFacade(
             }
             if (retryCount == MAX_RETRY_COUNT) {
                 logger.error("Failed to create review.", it)
+                createReviewCache.remove(review.id)
                 throw it
             }
             logger.warn("Failed to create review. retrying... retryCount: \"${retryCount + 1}\"", it)

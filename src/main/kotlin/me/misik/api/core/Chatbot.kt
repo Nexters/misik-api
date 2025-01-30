@@ -2,7 +2,6 @@ package me.misik.api.core
 
 import kotlinx.coroutines.flow.Flow
 import me.misik.api.domain.Review
-import me.misik.api.domain.query.Prompt
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.service.annotation.PostExchange
 
@@ -40,7 +39,7 @@ fun interface Chatbot {
             fun from(review: Review): Request {
                 return Request(
                     messages = listOf(
-                        Message.createSystem(review.requestPrompt.promptCommand),
+                        Message.createSystem(review.requestPrompt.promptCommand + review.requestPrompt.hashTags.joinToString(", ") { "$it" }),
                         Message.createUser(review.requestPrompt.ocrText)
                     )
                 )
