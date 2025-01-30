@@ -10,7 +10,7 @@ data class ReviewStyleResponse(
         fun from(reviewStyle: ReviewStyle): ReviewStyleResponse {
             return ReviewStyleResponse(
                 icon = reviewStyle.iconUrl,
-                style = reviewStyle.name
+                style = reviewStyle.name,
             )
         }
     }

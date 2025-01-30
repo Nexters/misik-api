@@ -6,7 +6,7 @@ data class ReviewStylesResponse(
     val reviewStyles: List<ReviewStyleResponse>
 ) {
     companion object {
-        fun from(reviewStyles: Array<ReviewStyle>) : ReviewStylesResponse {
+        fun from(reviewStyles: List<ReviewStyle>) : ReviewStylesResponse {
             return ReviewStylesResponse(
                 reviewStyles.map { ReviewStyleResponse.from(it) }.toList()
             )
