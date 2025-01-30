@@ -1,6 +1,6 @@
 package me.misik.api.domain
 
-import me.misik.api.api.request.CreateReviewRequest
+import me.misik.api.domain.request.CreateReviewRequest
 
 fun review(
     id: Long = 0L,

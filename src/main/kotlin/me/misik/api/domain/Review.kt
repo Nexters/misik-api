@@ -64,4 +64,8 @@ class Review(
             requestPrompt = requestPrompt,
         )
     }
+
+    fun addText(newText: String) {
+        text += newText
+    }
 }

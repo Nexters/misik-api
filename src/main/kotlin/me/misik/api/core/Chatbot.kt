@@ -2,7 +2,6 @@ package me.misik.api.core
 
 import kotlinx.coroutines.flow.Flow
 import me.misik.api.domain.Review
-import me.misik.api.domain.query.Prompt
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.service.annotation.PostExchange
 
