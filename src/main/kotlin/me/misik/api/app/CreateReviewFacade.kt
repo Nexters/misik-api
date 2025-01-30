@@ -71,7 +71,7 @@ class CreateReviewFacade(
         }
     }
 
-    fun parseOcrText(deviceId: String, ocrText: OcrTextRequest): ParsedOcrResponse {
+    fun parseOcrText( ocrText: OcrTextRequest): ParsedOcrResponse {
         val response = ocrParser.createParsedOcr(OcrParser.Request.from(ocrText.text))
         val responseContent = response.result?.message?.content?: ""
 

@@ -31,7 +31,6 @@ class ReviewController(
 
     @PostMapping("reviews/ocr-parsing")
     fun parseOcrText(
-        @RequestHeader("device-id") deviceId: String,
         @RequestBody ocrText: OcrTextRequest,
-    ) : ParsedOcrResponse = createReviewFacade.parseOcrText(deviceId, ocrText)
+    ) : ParsedOcrResponse = createReviewFacade.parseOcrText(ocrText)
 }
