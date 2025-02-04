@@ -5,6 +5,6 @@ data class ParsedOcrResponse(
 ) {
     data class KeyValuePair(
         val key: String,
-        val value: String
+        val value: String,
     )
 }

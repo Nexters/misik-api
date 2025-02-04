@@ -1,7 +1,7 @@
 package me.misik.api.api
 
-import me.misik.api.api.request.CreateReviewRequest
-import me.misik.api.api.request.OcrTextRequest
+import me.misik.api.domain.request.CreateReviewRequest
+import me.misik.api.domain.request.OcrTextRequest
 import me.misik.api.api.response.ParsedOcrResponse
 import me.misik.api.app.CreateReviewFacade
 import me.misik.api.app.ReCreateReviewFacade
