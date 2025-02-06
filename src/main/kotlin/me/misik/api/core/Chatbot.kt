@@ -10,6 +10,7 @@ fun interface Chatbot {
     @PostExchange("/testapp/v1/chat-completions/HCX-003")
     fun createReviewWithModelName(@RequestBody request: Request): Flow<Response>
 
+
     data class Request(
         val messages: List<Message>,
         val maxTokens: Int = 100,
@@ -57,3 +58,4 @@ fun interface Chatbot {
         )
     }
 }
+
