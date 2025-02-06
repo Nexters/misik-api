@@ -1,4 +1,4 @@
-package me.misik.api.domain.query
+package me.misik.api.domain.prompt
 
 import me.misik.api.domain.ReviewStyle
 import org.springframework.stereotype.Service

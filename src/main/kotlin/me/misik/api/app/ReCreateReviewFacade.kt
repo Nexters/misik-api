@@ -35,7 +35,7 @@ class ReCreateReviewFacade(
                 .filterNot { it.stopReason == ALREADY_COMPLETED }
                 .collect {
                     val newText = it.message?.content ?: ""
-                    review.text = review.text + newText
+                    review.addText(newText)
 
                     val updatedReview = review.copy()
                     createReviewCache.put(review.id, updatedReview)
@@ -50,6 +50,7 @@ class ReCreateReviewFacade(
             }
             if (retryCount == MAX_RETRY_COUNT) {
                 logger.error("Failed to create review.", it)
+                createReviewCache.remove(review.id)
                 throw it
             }
             logger.warn("Failed to create review. retrying... retryCount: \"${retryCount + 1}\"", it)
