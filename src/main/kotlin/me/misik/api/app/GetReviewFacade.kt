@@ -1,5 +1,6 @@
 package me.misik.api.app
 
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import me.misik.api.core.GracefulShutdownDispatcher
@@ -16,8 +17,17 @@ class GetReviewFacade(
     fun getReview(id: Long): Review {
         return runBlocking(GracefulShutdownDispatcher.dispatcher) {
             withTimeout(60.seconds) {
-                reviewService.getReview(id)
-            }.get()
+                var result: Review? = null
+                while (result == null) {
+                    delay(500)
+                    reviewService.getById(id)
+                        .takeIf { it.isCompleted }
+                        .let {
+                            result = it
+                        }
+                }
+                return@withTimeout result!!
+            }
         }
     }
 }

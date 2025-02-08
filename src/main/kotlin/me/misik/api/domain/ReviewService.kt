@@ -46,7 +46,4 @@ class ReviewService(
 
     fun getById(id: Long): Review = reviewRepository.findByIdOrNull(id)
         ?: throw IllegalArgumentException("Cannot find review by id \"$id\"")
-
-    fun getReview(id: Long) = reviewRepository.findById(id)
-        ?: throw IllegalArgumentException("Cannot find review by id \"$id\"")
 }
