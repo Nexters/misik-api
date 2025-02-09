@@ -5,24 +5,24 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
 import me.misik.api.api.response.ParsedOcrResponse
+import me.misik.api.core.Chatbot
+import me.misik.api.core.GracefulShutdownDispatcher
+import me.misik.api.core.OcrParser
 import me.misik.api.domain.CreateReviewCache
-import me.misik.api.domain.request.CreateReviewRequest
-import me.misik.api.domain.request.OcrTextRequest
 import me.misik.api.domain.Review
 import me.misik.api.domain.ReviewService
 import me.misik.api.domain.prompt.PromptService
-import me.misik.api.core.Chatbot
-import me.misik.api.core.OcrParser
-import me.misik.api.core.GracefulShutdownDispatcher
+import me.misik.api.domain.request.CreateReviewRequest
+import me.misik.api.domain.request.OcrTextRequest
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 
 @Service
 class CreateReviewFacade(
-    private val chatbot:Chatbot,
+    private val chatbot: Chatbot,
     private val ocrParser: OcrParser,
-    private val reviewService:ReviewService,
+    private val reviewService: ReviewService,
     private val promptService: PromptService,
     private val createReviewCache: CreateReviewCache,
     private val objectMapper: ObjectMapper,
@@ -30,7 +30,7 @@ class CreateReviewFacade(
 
     private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
-    fun createReviewInBackground(deviceId:String, createReviewRequest: CreateReviewRequest) : Long {
+    fun createReviewInBackground(deviceId: String, createReviewRequest: CreateReviewRequest): Long {
         val prompt = promptService.getByStyle(createReviewRequest.reviewStyle)
         val review = reviewService.createReview(deviceId, prompt.command, createReviewRequest)
 
@@ -54,7 +54,7 @@ class CreateReviewFacade(
                 }
         }.invokeOnCompletion {
             if (it == null) {
-                createReviewCache.get(review.id)?.let {
+                createReviewCache.get(review.id).let {
                     reviewService.updateAndCompleteReview(it.id, it.text)
                 }
                 createReviewCache.remove(review.id)
@@ -65,23 +65,36 @@ class CreateReviewFacade(
                 createReviewCache.remove(review.id)
                 throw it
             }
-            logger.warn("Failed to create review. retrying... retryCount: \"${retryCount + 1}\"", it)
+            logger.warn(
+                "Failed to create review. retrying... retryCount: \"${retryCount + 1}\"",
+                it
+            )
             createReviewWithRetry(review, retryCount + 1)
         }
     }
 
-    fun parseOcrText(ocrText: OcrTextRequest): ParsedOcrResponse {
-        val response = ocrParser.createParsedOcr(OcrParser.Request.from(ocrText.text))
-        val responseContent = response.result?.message?.content ?: ""
+    fun parseOcrText(ocrText: OcrTextRequest): ParsedOcrResponse = parseOcrWithRetry(ocrText, 0)
 
-        val parsedOcr = objectMapper.readValue(responseContent, ParsedOcrResponse::class.java)
-            ?: throw IllegalStateException("Invalid OCR text format")
+    private fun parseOcrWithRetry(ocrText: OcrTextRequest, retryCount: Int): ParsedOcrResponse {
+        return runCatching {
+            val response = ocrParser.createParsedOcr(OcrParser.Request.from(ocrText.text))
 
-        if (parsedOcr.parsed.isEmpty()) {
-            throw IllegalArgumentException("Parsed OCR content is empty")
+            val responseContent = response.result?.message?.content ?: ""
+            logger.info("ocr responseContent $responseContent")
+
+            val parsedOcr = objectMapper.readValue(responseContent, ParsedOcrResponse::class.java)
+                ?: throw IllegalStateException("Invalid OCR text format")
+
+            require(parsedOcr.parsed.isEmpty().not()) { "Parsed OCR content is empty" }
+
+            parsedOcr
+        }.getOrElse {
+            logger.error("OCR Parsing fail", it)
+            if (retryCount < MAX_RETRY_COUNT) {
+                return@getOrElse parseOcrWithRetry(ocrText, retryCount + 1)
+            }
+            throw it
         }
-
-        return parsedOcr
     }
 
     private companion object {
