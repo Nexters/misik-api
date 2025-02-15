@@ -11,7 +11,7 @@ fun interface OcrParser {
 
     data class Request(
         val messages: List<Message>,
-        val maxTokens: Int = 100,
+        val maxTokens: Int = 1000,
         val includeAiFilters: Boolean = true,
     ) {
         data class Message(
