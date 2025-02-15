@@ -11,12 +11,13 @@ import me.misik.api.core.OcrParser
 import me.misik.api.domain.CreateReviewCache
 import me.misik.api.domain.Review
 import me.misik.api.domain.ReviewService
+import me.misik.api.domain.prompt.Prompt
 import me.misik.api.domain.prompt.PromptService
+import me.misik.api.domain.prompt.PromptType
 import me.misik.api.domain.request.CreateReviewRequest
 import me.misik.api.domain.request.OcrTextRequest
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-
 
 @Service
 class CreateReviewFacade(
@@ -73,11 +74,18 @@ class CreateReviewFacade(
         }
     }
 
-    fun parseOcrText(ocrText: OcrTextRequest): ParsedOcrResponse = parseOcrWithRetry(ocrText, 0)
+    fun parseOcrText(ocrText: OcrTextRequest): ParsedOcrResponse {
+        val prompt = promptService.findAllByType(PromptType.OCR).first()
+        return parseOcrWithRetry(prompt, ocrText, 0)
+    }
 
-    private fun parseOcrWithRetry(ocrText: OcrTextRequest, retryCount: Int): ParsedOcrResponse {
+    private fun parseOcrWithRetry(
+        prompt: Prompt,
+        ocrText: OcrTextRequest,
+        retryCount: Int,
+    ): ParsedOcrResponse {
         return runCatching {
-            val response = ocrParser.createParsedOcr(OcrParser.Request.from(ocrText.text))
+            val response = ocrParser.createParsedOcr(OcrParser.Request.of(prompt, ocrText.text))
 
             val responseContent = response.result?.message?.content ?: ""
             logger.info("ocr responseContent $responseContent")
@@ -85,13 +93,14 @@ class CreateReviewFacade(
             val parsedOcr = objectMapper.readValue(responseContent, ParsedOcrResponse::class.java)
                 ?: throw IllegalStateException("Invalid OCR text format")
 
+            require(parsedOcr.status) { "Wrong ocr request \"$ocrText\"" }
             require(parsedOcr.parsed.isEmpty().not()) { "Parsed OCR content is empty" }
 
             parsedOcr
         }.getOrElse {
             logger.error("OCR Parsing fail", it)
             if (retryCount < MAX_RETRY_COUNT) {
-                return@getOrElse parseOcrWithRetry(ocrText, retryCount + 1)
+                return@getOrElse parseOcrWithRetry(prompt, ocrText, retryCount + 1)
             }
             throw it
         }
