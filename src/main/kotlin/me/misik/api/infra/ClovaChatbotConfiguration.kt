@@ -7,14 +7,11 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.support.RestClientAdapter
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.support.WebClientAdapter
 import org.springframework.web.service.invoker.HttpServiceProxyFactory
-import kotlin.time.Duration.Companion.milliseconds
-
 
 @Configuration
 class ClovaChatbotConfiguration(
@@ -42,16 +39,12 @@ class ClovaChatbotConfiguration(
 
     @Bean
     fun ocrParser(): OcrParser {
-        val clientHttpRequestFactory = HttpComponentsClientHttpRequestFactory()
-        clientHttpRequestFactory.setReadTimeout(60000)
-
         val restClient = RestClient.builder()
             .baseUrl(chatbotUrl)
             .defaultHeaders { headers ->
                 headers.add(HttpHeaders.AUTHORIZATION, "Bearer $authorization")
                 headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             }
-            .requestFactory(clientHttpRequestFactory)
             .build()
 
         val httpServiceProxyFactory = HttpServiceProxyFactory
