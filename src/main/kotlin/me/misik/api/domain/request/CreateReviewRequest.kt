@@ -5,5 +5,5 @@ import me.misik.api.domain.ReviewStyle
 data class CreateReviewRequest(
     val ocrText: String,
     val hashTag: List<String>,
-    val reviewStyle: ReviewStyle
+    val reviewStyle: ReviewStyle = ReviewStyle.FRIENDLY,
 )
