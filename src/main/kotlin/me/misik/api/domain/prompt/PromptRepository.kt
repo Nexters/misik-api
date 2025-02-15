@@ -8,4 +8,7 @@ import org.springframework.data.repository.query.Param
 interface PromptRepository : JpaRepository<Prompt, Long> {
     @Query("SELECT p FROM Prompt p WHERE p.style = :reviewStyle")
     fun findByReviewStyleOrNull(@Param("reviewStyle") reviewStyle: ReviewStyle?): Prompt?
+
+    @Query("SELECt p FROM Prompt p WHERE p.type = :promptType")
+    fun findAllByType(@Param("promptType") promptType: PromptType): List<Prompt>
 }
