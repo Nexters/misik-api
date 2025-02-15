@@ -52,14 +52,15 @@ fun interface OcrParser {
     ) {
         data class Status(
             val code: String,
-            val message: String
+            val message: String,
         )
+
         data class Result(
             val message: Message?
         ) {
             data class Message(
                 val role: String,
-                val content: String
+                val content: String,
             )
         }
     }

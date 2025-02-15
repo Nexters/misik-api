@@ -93,6 +93,7 @@ class CreateReviewFacade(
             val parsedOcr = objectMapper.readValue(responseContent, ParsedOcrResponse::class.java)
                 ?: throw IllegalStateException("Invalid OCR text format")
 
+            require(parsedOcr.status) { "Wrong ocr request \"$ocrText\"" }
             require(parsedOcr.parsed.isEmpty().not()) { "Parsed OCR content is empty" }
 
             parsedOcr
