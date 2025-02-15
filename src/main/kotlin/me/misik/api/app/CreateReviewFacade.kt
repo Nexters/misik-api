@@ -86,6 +86,7 @@ class CreateReviewFacade(
     ): ParsedOcrResponse {
         return runCatching {
             val response = ocrParser.createParsedOcr(OcrParser.Request.of(prompt, ocrText.text))
+            logger.info("ocr response before parsing $response")
 
             val responseContent = response.result?.message?.content ?: ""
             logger.info("ocr responseContent $responseContent")
