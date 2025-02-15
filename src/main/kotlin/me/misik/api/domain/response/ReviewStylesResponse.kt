@@ -6,9 +6,10 @@ data class ReviewStylesResponse(
     val reviewStyles: List<ReviewStyleResponse>
 ) {
     companion object {
-        fun from(reviewStyles: List<ReviewStyle>) : ReviewStylesResponse {
+        fun from(reviewStyles: List<ReviewStyle>): ReviewStylesResponse {
             return ReviewStylesResponse(
-                reviewStyles.map { ReviewStyleResponse.from(it) }
+                reviewStyles.filterNot { it != ReviewStyle.OCR }
+                    .map { ReviewStyleResponse.from(it) }
             )
         }
     }

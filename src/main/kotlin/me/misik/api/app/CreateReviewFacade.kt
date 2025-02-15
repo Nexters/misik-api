@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import me.misik.api.api.response.ParsedOcrResponse
 import me.misik.api.core.Chatbot
 import me.misik.api.core.GracefulShutdownDispatcher
@@ -18,6 +20,7 @@ import me.misik.api.domain.request.CreateReviewRequest
 import me.misik.api.domain.request.OcrTextRequest
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import kotlin.time.Duration.Companion.milliseconds
 
 @Service
 class CreateReviewFacade(
@@ -75,8 +78,12 @@ class CreateReviewFacade(
     }
 
     fun parseOcrText(ocrText: OcrTextRequest): ParsedOcrResponse {
-        val prompt = promptService.findAllByType(PromptType.OCR).first()
-        return parseOcrWithRetry(prompt, ocrText, 0)
+        return runBlocking(GracefulShutdownDispatcher.dispatcher) {
+            withTimeout(10.milliseconds) {
+                val prompt = promptService.findAllByType(PromptType.OCR).first()
+                parseOcrWithRetry(prompt, ocrText, 0)
+            }
+        }
     }
 
     private fun parseOcrWithRetry(
