@@ -115,6 +115,10 @@ class CreateReviewFacade(
             parsedOcr
         }.getOrElse {
             logger.error("OCR Parsing fail", it)
+            if (it is IllegalArgumentException) {
+                throw it
+            }
+
             if (retryCount < MAX_RETRY_COUNT) {
                 return@getOrElse parseOcrWithRetry(shopNameOcrRequest, itemNameOcrRequest, retryCount + 1)
             }
