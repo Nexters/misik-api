@@ -7,7 +7,7 @@ import me.misik.api.app.ReCreateReviewFacade
 import me.misik.api.app.GetReviewFacade
 import me.misik.api.domain.request.CreateReviewRequest
 import me.misik.api.domain.request.OcrTextRequest
-import me.misik.api.domain.ReviewStyle
+import me.misik.api.domain.Style
 import me.misik.api.domain.response.ReviewStylesResponse
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -37,9 +37,9 @@ class ReviewController(
 
     @GetMapping("reviews/styles")
     fun getReviewStyles() : ReviewStylesResponse {
-        val reviewStyles = ReviewStyle.entries.toList()
+        val styles = Style.entries.toList()
 
-        return ReviewStylesResponse.from(reviewStyles)
+        return ReviewStylesResponse.from(styles)
     }
 
     @GetMapping("reviews/{id}")

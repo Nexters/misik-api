@@ -4,23 +4,21 @@ import me.misik.api.domain.prompt.Prompt
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.service.annotation.PostExchange
 
-fun interface OcrParser {
+fun interface OpenAIOcrParser {
 
-    @PostExchange("/testapp/v1/chat-completions/HCX-003")
+    @PostExchange("/v1/chat/completions")
     fun createParsedOcr(@RequestBody request: Request): Response
 
     data class Request(
+        val model: String = "gpt-4o-mini",
         val messages: List<Message>,
-        val maxTokens: Int = 1000,
-        val includeAiFilters: Boolean = true,
+        val max_tokens: Int = 1000,
     ) {
         data class Message(
             val role: String,
-            val content: String,
+            val content: String
         ) {
-
             companion object {
-
                 fun createSystem(content: String) = Message(
                     role = "system",
                     content = content,
@@ -34,7 +32,6 @@ fun interface OcrParser {
         }
 
         companion object {
-
             fun from(prompt: Prompt, ocrText: String): Request {
                 return Request(
                     messages = listOf(
@@ -47,21 +44,20 @@ fun interface OcrParser {
     }
 
     data class Response(
-        val status: Status?,
-        val result: Result?
+        val id: String?,
+        val created: Long?,
+        val model: String?,
+        val choices: List<Choice>?
     ) {
-        data class Status(
-            val code: String,
-            val message: String,
+        data class Choice(
+            val message: Message,
+            val finish_reason: String
         )
 
-        data class Result(
-            val message: Message?
-        ) {
-            data class Message(
-                val role: String,
-                val content: String,
-            )
-        }
+        data class Message(
+            val role: String,
+            val content: String
+        )
     }
+
 }
