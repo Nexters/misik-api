@@ -34,7 +34,7 @@ fun createReviewRequestFixture(
 ): CreateReviewRequest = CreateReviewRequest(
     ocrText = ocrText,
     hashTag = hashTag,
-    style = style,
+    reviewStyle = style,
 )
 
 fun deviceIdFixture(): String = "testDeviceId"
