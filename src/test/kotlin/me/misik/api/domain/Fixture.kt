@@ -17,7 +17,7 @@ fun review(
 )
 
 fun requestPrompt(
-    style: ReviewStyle = ReviewStyle.PROFESSIONAL,
+    style: Style = Style.PROFESSIONAL,
     text: String = "",
     hashTags: List<String> = listOf(),
 ): RequestPrompt = RequestPrompt(
@@ -30,11 +30,11 @@ fun requestPrompt(
 fun createReviewRequestFixture(
     ocrText: String = "testOcrText",
     hashTag: List<String> = listOf("testHashTag"),
-    reviewStyle: ReviewStyle = ReviewStyle.PROFESSIONAL
+    style: Style = Style.PROFESSIONAL
 ): CreateReviewRequest = CreateReviewRequest(
     ocrText = ocrText,
     hashTag = hashTag,
-    reviewStyle = reviewStyle,
+    reviewStyle = style,
 )
 
 fun deviceIdFixture(): String = "testDeviceId"

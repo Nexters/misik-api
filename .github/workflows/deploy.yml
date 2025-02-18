@@ -68,6 +68,7 @@ jobs:
             "REDIS_HOST=${{ secrets.REDIS_HOST }}"
             "REDIS_PORT=${{ secrets.REDIS_PORT }}"
             "CLOVA_AUTHORIZATION=${{ secrets.CLOVA_AUTHORIZATION }}"
+            "OPENAI_AUTHORIZATION=${{ secrets.OPENAI_AUTHORIZATION }}"
 
   deploy:
     needs: build
