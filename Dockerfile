@@ -6,6 +6,7 @@ ARG DB_PASSWORD
 ARG REDIS_HOST
 ARG REDIS_PORT
 ARG CLOVA_AUTHORIZATION
+ARG OPENAI_AUTHORIZATION
 
 ARG JAR_FILE=./build/libs/*.jar
 COPY ${JAR_FILE} misik-api.jar
@@ -16,6 +17,7 @@ ENV db_url=${DB_URL} \
   redis_host=${REDIS_HOST} \
   redis_port=${REDIS_PORT} \
   clova_authorization=${CLOVA_AUTHORIZATION}
+  openai_authorization=${OPENAI_AUTHORIZATION}
 
 ENTRYPOINT java -jar misik-api.jar \
   --spring.datasource.url=${db_url} \
@@ -24,3 +26,4 @@ ENTRYPOINT java -jar misik-api.jar \
   --netx.host=${redis_host} \
   --netx.port=${redis_port} \
   --me.misik.chatbot.clova.authorization=${clova_authorization}
+  --me.misik.chatbot.openai.authorization=${openai_authorization}
