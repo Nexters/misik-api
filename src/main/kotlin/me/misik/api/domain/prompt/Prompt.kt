@@ -2,7 +2,7 @@ package me.misik.api.domain.prompt
 
 import jakarta.persistence.*
 import me.misik.api.domain.AbstractTime
-import me.misik.api.domain.ReviewStyle
+import me.misik.api.domain.Style
 
 @Entity
 @Table(
@@ -16,7 +16,7 @@ class Prompt(
 
     @Enumerated(EnumType.STRING)
     @Column(name = "style", columnDefinition = "VARCHAR(20)", nullable = false)
-    val style: ReviewStyle,
+    val style: Style,
 
     @Column(name = "command", columnDefinition = "TEXT", nullable = false)
     val command: String,

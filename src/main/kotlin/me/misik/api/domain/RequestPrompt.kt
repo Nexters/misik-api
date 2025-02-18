@@ -7,7 +7,7 @@ import me.misik.api.domain.converter.ListToStringConverter
 class RequestPrompt(
     @Enumerated(EnumType.STRING)
     @Column(name = "style", nullable = false, columnDefinition = "VARCHAR(20)")
-    val style: ReviewStyle,
+    val style: Style,
 
     @Column(name = "ocr_text", columnDefinition = "TEXT", nullable = false)
     val ocrText: String,
